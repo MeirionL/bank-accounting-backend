@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"log"
 	"net/http"
 	"os"
@@ -10,22 +11,37 @@ import (
 )
 
 type transaction struct {
+	ID        string  `json:"id"`
 	Payment   float64 `json:"payment"`
 	PreTotal  float64 `json:"pretotal"`
 	Recipient string  `json:"recipient"`
+}
+
+var transactions = []transaction{
+	{ID: "1", Payment: 56.99, PreTotal: 200, Recipient: "John"},
+	{ID: "2", Payment: 17.99, PreTotal: 300, Recipient: "Connor"},
+	{ID: "3", Payment: 39.99, PreTotal: 132.47, Recipient: "Doyle"},
 }
 
 func getTransactions(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, transactions)
 }
 
-var transactions = []transaction{
-	{Payment: 56.99, PreTotal: 200, Recipient: "John"},
-	{Payment: 17.99, PreTotal: 300, Recipient: "Connor"},
-	{Payment: 39.99, PreTotal: 132.47, Recipient: "Doyle"},
-}
-
 func postTransactions(c *gin.Context) {
+	// NEEDS LOGIC FOR FINDING APPROPRIATE PARAMETERS AND SUBTRACTING THEM
+	id, ok := c.GetQuery("id")
+	if ok == false {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "Missing transaction id"})
+		return
+	}
+
+	transaction, err := getTransactionById(id)
+
+	if err != nil {
+		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Transaction not found"})
+		return
+	}
+
 	var newTransaction transaction
 	if err := c.BindJSON(&newTransaction); err != nil {
 		return
@@ -34,30 +50,39 @@ func postTransactions(c *gin.Context) {
 	c.IndentedJSON(http.StatusCreated, newTransaction)
 }
 
-func getTransactionByRecipient(c *gin.Context) {
-	recipient := c.Param("recipient")
+func transactionById(c *gin.Context) {
+	id := c.Param("id")
+	transaction, err := getTransactionById(id)
 
-	for _, t := range transactions {
-		if t.Recipient == recipient {
-			c.IndentedJSON(http.StatusOK, t)
-			return
+	if err != nil {
+		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Transaction not found"})
+		return
+	}
+
+	c.IndentedJSON(http.StatusOK, transaction)
+}
+
+func getTransactionById(id string) (*transaction, error) {
+	for i, b := range transactions {
+		if b.ID == id {
+			return &transactions[i], nil
 		}
 	}
-	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "recipient not found"})
+
+	return nil, errors.New("transaction not found")
 }
 
 func main() {
 	godotenv.Load(".env")
 
-	portString := os.Getenv("PORT")
+	portString := "localhost:" + os.Getenv("PORT")
 	if portString == "" {
 		log.Fatal("port is not found in the environment")
 	}
 
-	router := gin.Default() //initialising router
-	router.GET("/transactions", getTransactions)
-	router.GET("/transactions/:recipient", getTransactionByRecipient)
+	router := gin.Default()                      //initialising router
+	router.GET("/transactions", getTransactions) // sending a GET request to /transactions calls the getTransactions function
+	router.GET("/transactions/:id", transactionById)
 	router.POST("/transactions", postTransactions)
-	addr := "localhost:" + portString
-	router.Run(addr) //attaching it to an http.Server
+	router.Run(portString) //attaching it to an http.Server
 }
