@@ -1,9 +1,12 @@
 package main
 
 import (
+	"log"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
 type transaction struct {
@@ -44,9 +47,17 @@ func getTransactionByRecipient(c *gin.Context) {
 }
 
 func main() {
+	godotenv.Load(".env")
+
+	portString := os.Getenv("PORT")
+	if portString == "" {
+		log.Fatal("port is not found in the environment")
+	}
+
 	router := gin.Default() //initialising router
 	router.GET("/transactions", getTransactions)
 	router.GET("/transactions/:recipient", getTransactionByRecipient)
 	router.POST("/transactions", postTransactions)
-	router.Run("localhost:8080") //attaching it to an http.Server
+	addr := "localhost:" + portString
+	router.Run(addr) //attaching it to an http.Server
 }
