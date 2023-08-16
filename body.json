@@ -1,5 +1,7 @@
 {
     "payment": 69,
-    "pretotal": 420,
-    "recipient": "Patrick"
+    "recipient": "Pitchrak", 
+    "accountNumber": "85027593",
+    "sortCode": "86-02-66",  
+    "message": "Moo money"
 }
