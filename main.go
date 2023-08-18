@@ -119,6 +119,27 @@ func main() {
 	}
 
 	router := gin.Default() //initialising router
+
+	log.Printf("Server starting on port %v", portString)
+
+	v1Router := router.Group("/v1")
+
+	v1Router.GET("/healthz", func(c *gin.Context) { // A path to call to check if your server is still live
+		c.JSON(http.StatusOK, gin.H{
+			"status": "ok",
+		})
+	})
+
+	v1Router.Use(func(c *gin.Context) {
+		c.Next()
+
+		if len(c.Errors) > 0 {
+			err := c.Errors[0].Err
+
+			c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("An eror occurred: %s", err)})
+		}
+	})
+
 	router.GET("/balance", getBalance)
 	router.GET("/lastTransaction", getLastTransaction)
 	router.GET("/transactions", getTransactions) // sending a GET request to /transactions calls the getTransactions function
