@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"errors"
 	"fmt"
 	"log"
@@ -9,8 +10,11 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/MeirionL/personal-finance-app/internal/database"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+
+	_ "github.com/lib/pq"
 )
 
 var Total float64 = 885.03
@@ -28,6 +32,10 @@ type transaction struct {
 	Time          string  `json:"time"`
 	Date          string  `json:"data"`
 	Message       string  `json:"message"`
+}
+
+type apiConfig struct {
+	DB *database.Queries // Caalling the database package in my directory
 }
 
 var transactions = []transaction{
@@ -117,6 +125,18 @@ func main() {
 	if portString == "" {
 		log.Fatal("port is not found in the environment")
 	}
+
+	dbURL := "localhost:" + os.Getenv("DB_URL")
+	if dbURL == "" {
+		log.Fatal("DB_URL is not found in the environment")
+	}
+
+	conn, err := sql.Open("postgres", dbURL)
+	if err != nil {
+		log.Fatal("Can't connect to database")
+	}
+
+	apiCfg := apiConfig{}
 
 	router := gin.Default() //initialising router
 
