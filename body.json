@@ -1,7 +1,20 @@
 {
-    "payment": 69,
-    "recipient": "Pitchrak", 
-    "accountNumber": "85027593",
-    "sortCode": "86-02-66",  
-    "message": "Moo money"
+    "CurrentAccount": {
+        "HolderName": "Meirion E Layton",
+        "Balance": 420,
+        "AccountNumber": "12345678",
+        "SortCode": "123456"
+    },
+    "PartnerAccount": {
+        "HolderName": "Pitchrak M Moo",
+        "AccountNumber": "87654321",
+        "SortCode": "654321"
+    },
+    "TimeOf": {
+        "Time": "2023-09-01T12:34:56Z",
+        "Date": "2023-09-01T00:00:00Z"
+    },
+    "PaymentAmount": 70,
+    "IsOutgoing": true,
+    "Message": "Moo money"
 }
