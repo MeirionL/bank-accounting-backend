@@ -42,7 +42,7 @@ func (apiCfg *apiConfig) handlerTransactionsCreate(w http.ResponseWriter, r *htt
 
 	newPartner := true
 
-	respondWithJSON(w, http.StatusCreated, transaction{
+	respondWithJSON(w, http.StatusCreated, Transaction{
 		ID:             transactionID,
 		PreBalance:     preBalance,
 		PaymentAmount:  params.PaymentAmount,

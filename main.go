@@ -15,7 +15,7 @@ import (
 	_ "github.com/lib/pq" // Imported database driver we need
 )
 
-type transaction struct {
+type Transaction struct {
 	ID             int     `json:"id"`
 	PreBalance     float64 `json:"pre_balance"`
 	PaymentAmount  float64 `json:"payment"`
@@ -54,12 +54,12 @@ func main() {
 		log.Fatal("DB_URL is not found in the environment")
 	}
 
-	db, err := sql.Open("postgres", dbURL) // Loading in our database
+	db, err := sql.Open("postgres", dbURL) // Loading in our database.
 	if err != nil {
 		log.Fatal("Can't connect to database")
 	}
 
-	apiCfg := apiConfig{ // An API config we can pass to our
+	cfg := apiConfig{ // An API config we can pass to our
 		DB: database.New(db), // handler so that it has access to
 	} // our database.
 
@@ -77,12 +77,13 @@ func main() {
 	v1Router := chi.NewRouter()
 	v1Router.Get("/healthz", handlerReadiness)
 	v1Router.Get("/err", handlerErr)
-	v1Router.Post("/users", apiCfg.handlerCreateUser)
-	v1Router.Get("/transactions/last", apiCfg.handlerLastTransactionGet)
-	v1Router.Get("/transactions", apiCfg.handlerTransactionsRetrieve)
-	v1Router.Get("/transactions/{id}", apiCfg.handlerTransactionGet)
-	v1Router.Post("/transactions", apiCfg.handlerTransactionsCreate)
-	router.Get("/balance", apiCfg.handlerGetBalance)
+	v1Router.Post("/users", cfg.handlerCreateUser)
+	v1Router.Post("/users/account", cfg.handlerCreateAccount)
+	// v1Router.Get("/transactions/last", cfg.handlerLastTransactionGet)
+	// v1Router.Get("/transactions", cfg.handlerTransactionsRetrieve)
+	// v1Router.Get("/transactions/{id}", cfg.handlerTransactionGet)
+	// v1Router.Post("/transactions", cfg.handlerTransactionsCreate)
+	// router.Get("/balance", cfg.handlerGetBalance)
 
 	router.Mount("/v1", v1Router)
 
@@ -91,12 +92,8 @@ func main() {
 		Addr:    ":" + portString,
 	}
 
-	err = srv.ListenAndServe()
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	log.Printf("Server starting on port %v", portString)
+	log.Fatal(srv.ListenAndServe())
 }
 
 // func getLastTransaction(c *gin.Context) {
