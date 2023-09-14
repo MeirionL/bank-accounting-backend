@@ -5,7 +5,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"time"
 
 	"github.com/MeirionL/personal-finance-app/internal/database"
 	"github.com/go-chi/chi/v5"
@@ -15,21 +14,21 @@ import (
 	_ "github.com/lib/pq" // Imported database driver we need
 )
 
-type Transaction struct {
-	ID             int     `json:"id"`
-	PreBalance     float64 `json:"pre_balance"`
-	PaymentAmount  float64 `json:"payment"`
-	PostBalance    float64 `json:"post_balance"`
-	PartnerAccount string  `json:"partner_account"`
-	AccountNumber  string  `json:"account_number"`
-	SortCode       string  `json:"sort_code"`
-	NewPartner     bool    `json:"paid_before"`
-	TimeOf         struct {
-		Time time.Time `json:"time"`
-		Date time.Time `json:"data"`
-	}
-	Message string `json:"message"`
-}
+// type Transaction struct {
+// 	ID             int     `json:"id"`
+// 	PreBalance     float64 `json:"pre_balance"`
+// 	PaymentAmount  float64 `json:"payment"`
+// 	PostBalance    float64 `json:"post_balance"`
+// 	PartnerAccount string  `json:"partner_account"`
+// 	AccountNumber  string  `json:"account_number"`
+// 	SortCode       string  `json:"sort_code"`
+// 	NewPartner     bool    `json:"paid_before"`
+// 	TimeOf         struct {
+// 		Time time.Time `json:"time"`
+// 		Date time.Time `json:"data"`
+// 	}
+// 	Message string `json:"message"`
+// }
 
 type apiConfig struct {
 	DB *database.Queries // Calling the database package in my directory
@@ -78,7 +77,13 @@ func main() {
 	v1Router.Get("/healthz", handlerReadiness)
 	v1Router.Get("/err", handlerErr)
 	v1Router.Post("/users", cfg.handlerCreateUser)
+	v1Router.Get("/users", cfg.middlewareAuth(cfg.handlerGetUser))
+	v1Router.Delete("/users/{userID}", cfg.middlewareAuth(cfg.handlerDeleteUser))
 	v1Router.Post("/users/account", cfg.handlerCreateAccount)
+
+	v1Router.Post("/transactions", cfg.middlewareAuth(cfg.handlerCreateTransaction))
+	v1Router.Get("/transactions", cfg.handlerGetTransactions)
+
 	// v1Router.Get("/transactions/last", cfg.handlerLastTransactionGet)
 	// v1Router.Get("/transactions", cfg.handlerTransactionsRetrieve)
 	// v1Router.Get("/transactions/{id}", cfg.handlerTransactionGet)

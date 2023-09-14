@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-func (apiCfg *apiConfig) handlerGetBalance(w http.ResponseWriter, r *http.Request) {
+func (cfg *apiConfig) handlerGetBalance(w http.ResponseWriter, r *http.Request) {
 	type parameters struct {
 		UserID string `json:"user_id"`
 	}
@@ -22,7 +22,7 @@ func (apiCfg *apiConfig) handlerGetBalance(w http.ResponseWriter, r *http.Reques
 	}
 	// userID, err := strconv.Atoi(params.UserID)
 
-	// user, err := apiCfg.DB.GetUser(userID)
+	// user, err := cfg.DB.GetUser(userID)
 
 	respondWithJSON(w, http.StatusOK, response{
 		Balance: 24,

@@ -12,6 +12,7 @@ type User struct {
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 	Name      string    `json:"name"`
+	ApiKey    string    `json:"api_key"`
 }
 
 func databaseUserToUser(dbUser database.User) User {
@@ -20,5 +21,48 @@ func databaseUserToUser(dbUser database.User) User {
 		CreatedAt: dbUser.CreatedAt,
 		UpdatedAt: dbUser.UpdatedAt,
 		Name:      dbUser.Name,
+		ApiKey:    dbUser.ApiKey,
 	}
+}
+
+type Transaction struct {
+	ID              uuid.UUID `json:"id"`
+	CreatedAt       time.Time `json:"created_at"`
+	UpdatedAt       time.Time `json:"updated_at"`
+	TransactionTime time.Time `json:"transaction_time"`
+	Type            string    `json:"type"`
+	Amount          float32   `json:"amount"`
+	PreBalance      float32   `json:"pre_balance"`
+	PostBalance     float32   `json:"post_balance"`
+	NewAccount      bool      `json:"new_account"`
+	Name            string    `json:"name"`
+	AccountNumber   string    `json:"account_number"`
+	SortCode        string    `json:"sort_code"`
+	UserID          uuid.UUID `json:"user_id"`
+}
+
+func databaseTransactionToTransaction(dbTransaction database.Transaction) Transaction {
+	return Transaction{
+		ID:              dbTransaction.ID,
+		CreatedAt:       dbTransaction.CreatedAt,
+		UpdatedAt:       dbTransaction.UpdatedAt,
+		TransactionTime: dbTransaction.TransactionTime,
+		Type:            dbTransaction.Type,
+		Amount:          dbTransaction.Amount,
+		PreBalance:      dbTransaction.PreBalance,
+		PostBalance:     dbTransaction.PostBalance,
+		NewAccount:      dbTransaction.NewAccount,
+		Name:            dbTransaction.Name,
+		AccountNumber:   dbTransaction.AccountNumber,
+		SortCode:        dbTransaction.SortCode,
+		UserID:          dbTransaction.UserID,
+	}
+}
+
+func databaseTransactionsToTransactions(dbTransactions []database.Transaction) []Transaction {
+	transactions := []Transaction{}
+	for _, dbTransaction := range dbTransactions {
+		transactions = append(transactions, databaseTransactionToTransaction(dbTransaction))
+	}
+	return transactions
 }

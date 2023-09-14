@@ -59,3 +59,18 @@ func (cfg *apiConfig) handlerCreateAccount(w http.ResponseWriter, r *http.Reques
 	// 	},
 	// })
 }
+
+// PROPER DELETE ACCOUNT CODE HANDLER
+// func (cfg *apiConfig) handlerDeleteAccount(w http.ResponseWriter, r *http.Request, user database.User) {
+// 	accountIDStr := chi.URLParam(r, "accountID")
+// 	accountID, err := uuid.Parse(accountIDStr)
+// 	if err != nil {
+// 		respondWithError(w, 400, fmt.Sprintf("Couldn't parse account ID"))
+// 		return
+// 	}
+
+// 	cfg.DB.DeleteAccount(r.Context(), database.DeleteAccountParams{
+// 		ID:     accountID,
+// 		UserID: user.ID,
+// 	})
+// }

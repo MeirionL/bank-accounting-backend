@@ -4,7 +4,7 @@ import (
 	"net/http"
 )
 
-func (apiCfg *apiConfig) handlerTransactionGet(w http.ResponseWriter, r *http.Request) {
+func (cfg *apiConfig) handlerTransactionGet(w http.ResponseWriter, r *http.Request) {
 	// transacIDString := chi.URLParam(r, "id")
 	// transacID, err := strconv.Atoi(transacIDString)
 	// if err != nil {
@@ -24,7 +24,7 @@ func (apiCfg *apiConfig) handlerTransactionGet(w http.ResponseWriter, r *http.Re
 	// })
 }
 
-func (apiCfg *apiConfig) handlerTransactionsRetrieve(w http.ResponseWriter, r *http.Request) {
+func (cfg *apiConfig) handlerTransactionsRetrieve(w http.ResponseWriter, r *http.Request) {
 	// 	dbTransacs, err := cfg.DB.GetTransactions()
 	// 	if err != nil {
 	// 		respondWithError(w, http.StatusInternalServerError, "Couldn't retrieve transactions")
@@ -45,7 +45,7 @@ func (apiCfg *apiConfig) handlerTransactionsRetrieve(w http.ResponseWriter, r *h
 	//	}
 }
 
-func (apiCfg *apiConfig) handlerLastTransactionGet(w http.ResponseWriter, r *http.Request) {
+func (cfg *apiConfig) handlerLastTransactionGet(w http.ResponseWriter, r *http.Request) {
 	// 	dbTransac, err := cfg.DB.GetLastTransaction()
 	// 	if err != nil {
 	// 		respondWithError(w, http.StatusInternalServerError, "Couldn't retrieve transaction")
