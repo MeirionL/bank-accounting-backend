@@ -31,7 +31,8 @@ import (
 // }
 
 type apiConfig struct {
-	DB *database.Queries // Calling the database package in my directory
+	DB        *database.Queries // Calling the database package in my directory
+	jwtSecret string
 }
 
 // var transactions = []transaction{
@@ -48,6 +49,11 @@ func main() {
 		log.Fatal("port is not found in the environment")
 	}
 
+	jwtSecret := os.Getenv("JWT_SECRET")
+	if jwtSecret == "" {
+		log.Fatal("JWT_SECRET environment variable is not set")
+	}
+
 	dbURL := os.Getenv("DB_URL")
 	if dbURL == "" {
 		log.Fatal("DB_URL is not found in the environment")
@@ -59,8 +65,9 @@ func main() {
 	}
 
 	cfg := apiConfig{ // An API config we can pass to our
-		DB: database.New(db), // handler so that it has access to
-	} // our database.
+		DB:        database.New(db), // handler so that it has access to
+		jwtSecret: jwtSecret,        // our database.
+	}
 
 	router := chi.NewRouter() //initialising router
 
@@ -77,11 +84,15 @@ func main() {
 	v1Router.Get("/healthz", handlerReadiness)
 	v1Router.Get("/err", handlerErr)
 	v1Router.Post("/users", cfg.handlerCreateUser)
-	v1Router.Get("/users", cfg.middlewareAuth(cfg.handlerGetUser))
-	v1Router.Delete("/users/{userID}", cfg.middlewareAuth(cfg.handlerDeleteUser))
+	v1Router.Get("/users", cfg.handlerGetUsers)
+	v1Router.Get("/users/{userID}", cfg.handlerGetUserByID)
+	v1Router.Post("/login", cfg.handlerUsersLogin)
+	v1Router.Put("/users", cfg.handlerUsersUpdate)
+	v1Router.Delete("/users", cfg.handlerDeleteUser)
+	// v1Router.Get("/users", cfg.middlewareAuth(cfg.handlerGetUser))
 	v1Router.Post("/users/account", cfg.handlerCreateAccount)
 
-	v1Router.Post("/transactions", cfg.middlewareAuth(cfg.handlerCreateTransaction))
+	// v1Router.Post("/transactions", cfg.middlewareAuth(cfg.handlerCreateTransaction))
 	v1Router.Get("/transactions", cfg.handlerGetTransactions)
 
 	// v1Router.Get("/transactions/last", cfg.handlerLastTransactionGet)

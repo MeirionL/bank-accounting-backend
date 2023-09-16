@@ -23,13 +23,13 @@ type Transaction struct {
 	Name            string
 	AccountNumber   string
 	SortCode        string
-	UserID          uuid.UUID
+	UserID          int32
 }
 
 type User struct {
-	ID        uuid.UUID
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	Name      string
-	ApiKey    string
+	ID             int32
+	CreatedAt      time.Time
+	UpdatedAt      time.Time
+	Name           string
+	HashedPassword string
 }

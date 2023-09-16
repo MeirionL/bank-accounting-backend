@@ -1,8 +1,6 @@
 -- +goose Up
-ALTER TABLE users ADD COLUMN api_key VARCHAR(64) UNIQUE NOT NULL DEFAULT (
-    encode(sha256(random()::text::bytea), 'hex')
-);
+ALTER TABLE users ADD COLUMN hashed_password TEXT NOT NULL;
 
 
 -- +goose Down
-ALTER TABLE users DROP COLUMN api_key;
+ALTER TABLE users DROP COLUMN hashed_password;

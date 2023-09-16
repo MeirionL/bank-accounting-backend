@@ -45,7 +45,7 @@ type CreateTransactionParams struct {
 	Name            string
 	AccountNumber   string
 	SortCode        string
-	UserID          uuid.UUID
+	UserID          int32
 }
 
 func (q *Queries) CreateTransaction(ctx context.Context, arg CreateTransactionParams) (Transaction, error) {

@@ -1,12 +1,19 @@
 -- name: CreateUser :one
-INSERT INTO users (id, created_at, updated_at, name, api_key)
-VALUES ($1, $2, $3, $4,
-    encode(sha256(random()::text::bytea), 'hex')
-)
+INSERT INTO users (created_at, updated_at, name, hashed_password)
+VALUES ($1, $2, $3, $4)
 RETURNING *;
 
--- name: GetUserByAPIKey :one
-SELECT * FROM users WHERE api_key = $1;
+-- name: GetUsers :many
+SELECT * FROM users;
+
+-- name: GetUserByID :one
+SELECT * FROM users WHERE id = $1;
+
+-- name: UpdateUser :one
+UPDATE users
+SET name = $2, hashed_password = $3
+WHERE id = $1
+RETURNING *;
 
 -- name: DeleteUser :exec
 DELETE FROM users WHERE id = $1;
