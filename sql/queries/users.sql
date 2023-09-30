@@ -11,7 +11,7 @@ SELECT * FROM users WHERE id = $1;
 
 -- name: UpdateUser :one
 UPDATE users
-SET name = $2, hashed_password = $3
+SET  updated_at = $2, name = $3, hashed_password = $4
 WHERE id = $1
 RETURNING *;
 

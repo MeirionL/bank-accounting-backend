@@ -1,27 +1,33 @@
 package main
 
 import (
+	"context"
 	"net/http"
+	"strconv"
 
-	"github.com/MeirionL/personal-finance-app/internal/database"
+	"github.com/MeirionL/personal-finance-app/internal/auth"
 )
 
-type authedHandler func(http.ResponseWriter, *http.Request, database.User)
+type contextKey string
 
-// func (cfg *apiConfig) middlewareAuth(handler authedHandler) http.HandlerFunc {
-// 	return func(w http.ResponseWriter, r *http.Request) {
-// 		apiKey, err := auth.GetAPIKey(r.Header)
-// 		if err != nil {
-// 			respondWithError(w, 403, fmt.Sprintf("Auth error: %v", err))
-// 			return
-// 		}
+const userIDKey contextKey = "userID"
 
-// 		user, err := cfg.DB.GetUserByAPIKey(r.Context(), apiKey)
-// 		if err != nil {
-// 			respondWithError(w, 404, fmt.Sprintf("Couldn't get user: %v", err))
-// 			return
-// 		}
+func (cfg *apiConfig) middlewareAuth(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		userIDString, err := auth.ValidateUser(r, cfg.jwtSecret)
+		if err != nil {
+			respondWithError(w, http.StatusUnauthorized, "Unauthorized user")
+			return
+		}
 
-// 		handler(w, r, user)
-// 	}
-// }
+		userIDInt, err := strconv.Atoi(userIDString)
+		if err != nil {
+			respondWithError(w, http.StatusInternalServerError, "Couldn't convert userID to int")
+			return
+		}
+		userID := int32(userIDInt)
+
+		r = r.WithContext(context.WithValue(r.Context(), userIDKey, userID))
+		next.ServeHTTP(w, r)
+	})
+}

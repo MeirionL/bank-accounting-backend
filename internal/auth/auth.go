@@ -13,24 +13,6 @@ import (
 
 var ErrNoAuthHeaderIncluded = errors.New("not auth header included in request")
 
-// Example:
-// Authorization: ApiKey {insert apikey here}
-func GetAPIKey(headers http.Header) (string, error) {
-	val := headers.Get("Authorization")
-	if val == "" {
-		return "", errors.New("no authentication info found")
-	}
-
-	vals := strings.Split(val, " ")
-	if len(vals) != 2 {
-		return "", errors.New("malformed auth header")
-	}
-	if vals[0] != "ApiKey" {
-		return "", errors.New("malformed first part of auth header")
-	}
-	return vals[1], nil
-}
-
 func HashPassword(password string) (string, error) {
 	dat, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
@@ -69,6 +51,18 @@ func ValidateUser(r *http.Request, jwtSecret string) (string, error) {
 	return userID, nil
 }
 
+func GetBearerToken(headers http.Header) (string, error) {
+	authHeader := headers.Get("Authorization") // Gets stuff from "Authorization: Bearer <token>"
+	if authHeader == "" {
+		return "", ErrNoAuthHeaderIncluded
+	}
+	splitAuth := strings.Split(authHeader, " ")
+	if len(splitAuth) < 2 || splitAuth[0] != "Bearer" {
+		return "", errors.New("malformed authorization header")
+	}
+	return splitAuth[1], nil
+}
+
 func ValidateJWT(tokenString, tokenSecret string) (string, error) {
 	claimsStruct := jwt.RegisteredClaims{}
 	token, err := jwt.ParseWithClaims(
@@ -94,16 +88,4 @@ func ValidateJWT(tokenString, tokenSecret string) (string, error) {
 	}
 
 	return userIDString, nil
-}
-
-func GetBearerToken(headers http.Header) (string, error) {
-	authHeader := headers.Get("Authorization") // Gets stuff from "Authorization: Bearer <token>"
-	if authHeader == "" {
-		return "", ErrNoAuthHeaderIncluded
-	}
-	splitAuth := strings.Split(authHeader, " ")
-	if len(splitAuth) < 2 || splitAuth[0] != "Bearer" {
-		return "", errors.New("malformed authorization header")
-	}
-	return splitAuth[1], nil
 }

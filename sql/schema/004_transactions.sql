@@ -12,7 +12,7 @@ CREATE TABLE transactions (
     name TEXT NOT NULL,
     account_number TEXT NOT NULL,
     sort_code TEXT NOT NULL, 
-    user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE
+    account_id UUID NOT NULL REFERENCES accounts(id) ON DELETE CASCADE
 );
 
 -- +goose Down

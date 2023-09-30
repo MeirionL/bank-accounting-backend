@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strconv"
+	"time"
 
 	"github.com/MeirionL/personal-finance-app/internal/auth"
 	"github.com/MeirionL/personal-finance-app/internal/database"
@@ -19,14 +19,15 @@ func (cfg *apiConfig) handlerUsersUpdate(w http.ResponseWriter, r *http.Request)
 		User
 	}
 
-	subject, err := auth.ValidateUser(r, cfg.jwtSecret)
-	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("Couldn't validate user: %v", err))
+	userID, ok := r.Context().Value(userIDKey).(int32)
+	if !ok {
+		respondWithError(w, http.StatusInternalServerError, "Couldn't get userID from context")
+		return
 	}
 
 	decoder := json.NewDecoder(r.Body)
 	params := parameters{}
-	err = decoder.Decode(&params)
+	err := decoder.Decode(&params)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Couldn't decode parameters")
 		return
@@ -38,15 +39,9 @@ func (cfg *apiConfig) handlerUsersUpdate(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	userIDint, err := strconv.Atoi(subject)
-	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("Couldn't parse user ID: %v", err))
-		return
-	}
-	userID := int32(userIDint)
-
 	user, err := cfg.DB.UpdateUser(r.Context(), database.UpdateUserParams{
 		ID:             userID,
+		UpdatedAt:      time.Now(),
 		Name:           params.Name,
 		HashedPassword: hashedPassword,
 	})
@@ -57,26 +52,21 @@ func (cfg *apiConfig) handlerUsersUpdate(w http.ResponseWriter, r *http.Request)
 
 	respondWithJSON(w, http.StatusOK, response{
 		User: User{
-			Name: user.Name,
-			ID:   user.ID,
+			ID:        user.ID,
+			UpdatedAt: user.UpdatedAt,
+			Name:      user.Name,
 		},
 	})
 }
 
 func (cfg *apiConfig) handlerDeleteUser(w http.ResponseWriter, r *http.Request) {
-	subject, err := auth.ValidateUser(r, cfg.jwtSecret)
-	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("Couldn't validate user: %v", err))
-	}
-
-	userIDint, err := strconv.Atoi(subject)
-	if err != nil {
-		respondWithError(w, 400, fmt.Sprintf("Couldn't parse user ID: %v", err))
+	userID, ok := r.Context().Value(userIDKey).(int32)
+	if !ok {
+		respondWithError(w, http.StatusInternalServerError, "Couldn't get userID from context")
 		return
 	}
-	userID := int32(userIDint)
 
-	err = cfg.DB.DeleteUser(r.Context(), userID)
+	err := cfg.DB.DeleteUser(r.Context(), userID)
 	if err != nil {
 		respondWithError(w, 400, fmt.Sprintf("Couldn't delete user: %v", err))
 		return

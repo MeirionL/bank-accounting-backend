@@ -31,6 +31,38 @@ func databaseUsersToUsers(dbUsers []database.User) []User {
 	return users
 }
 
+type Account struct {
+	ID            uuid.UUID `json:"id"`
+	CreatedAt     time.Time `json:"created_at"`
+	UpdatedAt     time.Time `json:"updated_at"`
+	AccountName   string    `json:"account_name"`
+	Balance       float32   `json:"balance"`
+	AccountNumber string    `json:"account_number"`
+	SortCode      string    `json:"sort_code"`
+	UserID        int32     `json:"user_id"`
+}
+
+func databaseAccountToAccount(dbAccount database.Account) Account {
+	return Account{
+		ID:            dbAccount.ID,
+		CreatedAt:     dbAccount.CreatedAt,
+		UpdatedAt:     dbAccount.UpdatedAt,
+		AccountName:   dbAccount.AccountName,
+		Balance:       dbAccount.Balance,
+		AccountNumber: dbAccount.AccountNumber,
+		SortCode:      dbAccount.SortCode,
+		UserID:        dbAccount.UserID,
+	}
+}
+
+func databaseAccountsToAccounts(dbAccounts []database.Account) []Account {
+	accounts := []Account{}
+	for _, dbAccount := range dbAccounts {
+		accounts = append(accounts, databaseAccountToAccount(dbAccount))
+	}
+	return accounts
+}
+
 type Transaction struct {
 	ID              uuid.UUID `json:"id"`
 	CreatedAt       time.Time `json:"created_at"`
@@ -44,7 +76,7 @@ type Transaction struct {
 	Name            string    `json:"name"`
 	AccountNumber   string    `json:"account_number"`
 	SortCode        string    `json:"sort_code"`
-	UserID          int32     `json:"user_id"`
+	AccountID       uuid.UUID `json:"account_id"`
 }
 
 func databaseTransactionToTransaction(dbTransaction database.Transaction) Transaction {
@@ -61,7 +93,7 @@ func databaseTransactionToTransaction(dbTransaction database.Transaction) Transa
 		Name:            dbTransaction.Name,
 		AccountNumber:   dbTransaction.AccountNumber,
 		SortCode:        dbTransaction.SortCode,
-		UserID:          dbTransaction.UserID,
+		AccountID:       dbTransaction.AccountID,
 	}
 }
 
@@ -71,4 +103,32 @@ func databaseTransactionsToTransactions(dbTransactions []database.Transaction) [
 		transactions = append(transactions, databaseTransactionToTransaction(dbTransaction))
 	}
 	return transactions
+}
+
+type OthersAccount struct {
+	ID            int32     `json:"id"`
+	CreatedAt     time.Time `json:"created_at"`
+	UpdatedAt     time.Time `json:"updates_at"`
+	AccountName   string    `json:"account_name"`
+	AccountNumber string    `json:"account_number"`
+	SortCode      string    `json:"sort_code"`
+}
+
+func databaseOthersAccountToOthersAccount(dbOthersAccount database.OthersAccount) OthersAccount {
+	return OthersAccount{
+		ID:            dbOthersAccount.ID,
+		CreatedAt:     dbOthersAccount.CreatedAt,
+		UpdatedAt:     dbOthersAccount.UpdatedAt,
+		AccountName:   dbOthersAccount.AccountName,
+		AccountNumber: dbOthersAccount.AccountNumber,
+		SortCode:      dbOthersAccount.SortCode,
+	}
+}
+
+func databaseOthersAccountsToOthersAccounts(dbOthersAccounts []database.OthersAccount) []OthersAccount {
+	accounts := []OthersAccount{}
+	for _, dbOthersAccount := range dbOthersAccounts {
+		accounts = append(accounts, databaseOthersAccountToOthersAccount(dbOthersAccount))
+	}
+	return accounts
 }
