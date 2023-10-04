@@ -21,7 +21,7 @@ func (cfg *apiConfig) handlerUsersUpdate(w http.ResponseWriter, r *http.Request)
 
 	userID, ok := r.Context().Value(userIDKey).(int32)
 	if !ok {
-		respondWithError(w, http.StatusInternalServerError, "Couldn't get userID from context")
+		respondWithError(w, http.StatusInternalServerError, "couldn't get userID from context")
 		return
 	}
 
@@ -29,13 +29,13 @@ func (cfg *apiConfig) handlerUsersUpdate(w http.ResponseWriter, r *http.Request)
 	params := parameters{}
 	err := decoder.Decode(&params)
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, "Couldn't decode parameters")
+		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("couldn't decode parameters: %v", err))
 		return
 	}
 
 	hashedPassword, err := auth.HashPassword(params.Password)
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, "Couldn't hash password")
+		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("couldn't hash password: %v", err))
 		return
 	}
 
@@ -46,7 +46,7 @@ func (cfg *apiConfig) handlerUsersUpdate(w http.ResponseWriter, r *http.Request)
 		HashedPassword: hashedPassword,
 	})
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, "Couldn't update user")
+		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("couldn't update user: %v", err))
 		return
 	}
 
@@ -62,13 +62,13 @@ func (cfg *apiConfig) handlerUsersUpdate(w http.ResponseWriter, r *http.Request)
 func (cfg *apiConfig) handlerDeleteUser(w http.ResponseWriter, r *http.Request) {
 	userID, ok := r.Context().Value(userIDKey).(int32)
 	if !ok {
-		respondWithError(w, http.StatusInternalServerError, "Couldn't get userID from context")
+		respondWithError(w, http.StatusInternalServerError, "couldn't get userID from context")
 		return
 	}
 
 	err := cfg.DB.DeleteUser(r.Context(), userID)
 	if err != nil {
-		respondWithError(w, 400, fmt.Sprintf("Couldn't delete user: %v", err))
+		respondWithError(w, 400, fmt.Sprintf("couldn't delete user: %v", err))
 		return
 	}
 	respondWithJSON(w, 200, struct{}{})

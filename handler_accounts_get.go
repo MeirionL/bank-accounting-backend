@@ -11,7 +11,7 @@ import (
 func (cfg *apiConfig) handlerGetAccounts(w http.ResponseWriter, r *http.Request) {
 	userID, ok := r.Context().Value(userIDKey).(int32)
 	if !ok {
-		respondWithError(w, http.StatusInternalServerError, "Couldn't get userID from context")
+		respondWithError(w, http.StatusInternalServerError, "couldn't get userID from context")
 		return
 	}
 
@@ -28,7 +28,7 @@ func (cfg *apiConfig) handlerGetAccounts(w http.ResponseWriter, r *http.Request)
 	if accountIDString != "" {
 		accountID, err := uuid.Parse(accountIDString)
 		if err != nil {
-			respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("Unable to parse UUID: %v", err))
+			respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("unable to parse UUID: %v", err))
 			return
 		}
 		cfg.handlerGetAccountByID(w, r, userID, accountID)
@@ -37,7 +37,7 @@ func (cfg *apiConfig) handlerGetAccounts(w http.ResponseWriter, r *http.Request)
 
 	accounts, err := cfg.DB.GetAccounts(r.Context(), userID)
 	if err != nil {
-		respondWithError(w, 400, fmt.Sprintf("Couldn't get accounts: %v", err))
+		respondWithError(w, 400, fmt.Sprintf("couldn't get accounts: %v", err))
 		return
 	}
 
@@ -52,7 +52,7 @@ func (cfg *apiConfig) handlerGetAccountsBalances(w http.ResponseWriter, r *http.
 
 	userID, ok := r.Context().Value(userIDKey).(int32)
 	if !ok {
-		respondWithError(w, http.StatusInternalServerError, "Couldn't get userID from context")
+		respondWithError(w, http.StatusInternalServerError, "couldn't get userID from context")
 		return
 	}
 
@@ -61,7 +61,7 @@ func (cfg *apiConfig) handlerGetAccountsBalances(w http.ResponseWriter, r *http.
 		respondWithJSON(w, http.StatusOK, struct{}{})
 		return
 	} else if err != nil {
-		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("Couldn't get accounts balances: %v", err))
+		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("couldn't get accounts balances: %v", err))
 		return
 	}
 
@@ -83,7 +83,7 @@ func (cfg *apiConfig) handlerGetAccountByDetails(w http.ResponseWriter, r *http.
 		UserID:        userID,
 	})
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("Couldn't get account: %v", err))
+		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("couldn't get account by details: %v", err))
 		return
 	}
 
@@ -96,7 +96,7 @@ func (cfg *apiConfig) handlerGetAccountByID(w http.ResponseWriter, r *http.Reque
 		UserID: userID,
 	})
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("Couldn't get account: %v", err))
+		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("couldn't get account by ID: %v", err))
 		return
 	}
 

@@ -21,7 +21,7 @@ func (cfg *apiConfig) handlerCreateAccount(w http.ResponseWriter, r *http.Reques
 
 	userID, ok := r.Context().Value(userIDKey).(int32)
 	if !ok {
-		respondWithError(w, http.StatusInternalServerError, "Couldn't get userID from context")
+		respondWithError(w, http.StatusInternalServerError, "couldn't get userID from context")
 		return
 	}
 
@@ -29,7 +29,7 @@ func (cfg *apiConfig) handlerCreateAccount(w http.ResponseWriter, r *http.Reques
 	params := parameters{}
 	err := decoder.Decode(&params)
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, "Couldn't decode parameters")
+		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("couldn't decode parameters: %v", err))
 		return
 	}
 
@@ -44,7 +44,7 @@ func (cfg *apiConfig) handlerCreateAccount(w http.ResponseWriter, r *http.Reques
 		UserID:        userID,
 	})
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "Couldn't create account")
+		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("couldn't create account: %v", err))
 		return
 	}
 
@@ -63,7 +63,7 @@ func (cfg *apiConfig) handlerUpdateAccount(w http.ResponseWriter, r *http.Reques
 
 	userID, ok := r.Context().Value(userIDKey).(int32)
 	if !ok {
-		respondWithError(w, http.StatusInternalServerError, "Couldn't get userID from context")
+		respondWithError(w, http.StatusInternalServerError, "couldn't get userID from context")
 		return
 	}
 
@@ -71,13 +71,13 @@ func (cfg *apiConfig) handlerUpdateAccount(w http.ResponseWriter, r *http.Reques
 	params := parameters{}
 	err := decoder.Decode(&params)
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, "Couldn't decode parameters")
+		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("couldn't decode parameters: %v", err))
 		return
 	}
 
 	accountID, err := uuid.Parse(params.ID)
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("Unable to parse UUID: %v", err))
+		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("unable to parse UUID: %v", err))
 		return
 	}
 
@@ -89,7 +89,7 @@ func (cfg *apiConfig) handlerUpdateAccount(w http.ResponseWriter, r *http.Reques
 		Balance:     params.Balance,
 	})
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("Couldn't update account: %v", err))
+		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("couldn't update account: %v", err))
 		return
 	}
 
@@ -110,14 +110,14 @@ func (cfg *apiConfig) handlerUpdateAccount(w http.ResponseWriter, r *http.Reques
 func (cfg *apiConfig) handlerDeleteAccount(w http.ResponseWriter, r *http.Request) {
 	userID, ok := r.Context().Value(userIDKey).(int32)
 	if !ok {
-		respondWithError(w, http.StatusInternalServerError, "Couldn't get userID from context")
+		respondWithError(w, http.StatusInternalServerError, "couldn't get userID from context")
 		return
 	}
 
 	accountIDString := chi.URLParam(r, "accountID")
 	accountID, err := uuid.Parse(accountIDString)
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("Unable to parse UUID: %v", err))
+		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("unable to parse UUID: %v", err))
 		return
 	}
 
@@ -126,7 +126,7 @@ func (cfg *apiConfig) handlerDeleteAccount(w http.ResponseWriter, r *http.Reques
 		UserID: userID,
 	})
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("Couldn't delete account: %v", err))
+		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("couldn't delete account: %v", err))
 		return
 	}
 

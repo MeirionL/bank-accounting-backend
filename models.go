@@ -1,3 +1,6 @@
+// The following functions are required to apply JSON tags to the parameters of returned types from sqlc generated code, so that they
+// may be used in JSON responses.
+
 package main
 
 import (

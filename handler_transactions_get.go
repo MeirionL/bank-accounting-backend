@@ -17,7 +17,7 @@ func (cfg *apiConfig) handlerGetTransactions(w http.ResponseWriter, r *http.Requ
 
 	userID, ok := r.Context().Value(userIDKey).(int32)
 	if !ok {
-		respondWithError(w, http.StatusInternalServerError, "Couldn't get userID from context")
+		respondWithError(w, http.StatusInternalServerError, "couldn't get userID from context")
 		return
 	}
 
@@ -25,14 +25,14 @@ func (cfg *apiConfig) handlerGetTransactions(w http.ResponseWriter, r *http.Requ
 	params := parameters{}
 	err := decoder.Decode(&params)
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, "Couldn't decode parameters")
+		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("couldn't decode parameters: %v", err))
 		return
 	}
 
 	accountIDString := params.AccountID
 	accountID, err := uuid.Parse(accountIDString)
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("Unable to parse UUID: %v", err))
+		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("unable to parse UUID: %v", err))
 		return
 	}
 
@@ -43,7 +43,7 @@ func (cfg *apiConfig) handlerGetTransactions(w http.ResponseWriter, r *http.Requ
 	}
 
 	if userID != accountUserID {
-		respondWithError(w, http.StatusForbidden, "action is not authorized for user")
+		respondWithError(w, http.StatusForbidden, fmt.Sprintf("action is not authorized for user: %v", userID))
 		return
 	}
 
@@ -51,7 +51,7 @@ func (cfg *apiConfig) handlerGetTransactions(w http.ResponseWriter, r *http.Requ
 	if transacIDString != "" {
 		transacID, err := uuid.Parse(transacIDString)
 		if err != nil {
-			respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("Unable to parse UUID: %v", err))
+			respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("unable to parse UUID: %v", err))
 			return
 		}
 
@@ -77,7 +77,7 @@ func (cfg *apiConfig) handlerGetTransactions(w http.ResponseWriter, r *http.Requ
 		limitInt, err := strconv.Atoi(limitString)
 		limit := int32(limitInt)
 		if err != nil {
-			respondWithError(w, 400, "Couldn't convert limit string to int")
+			respondWithError(w, 400, "couldn't convert limit string to int")
 		}
 		cfg.handlerGetTransactionsWithLimit(w, r, accountID, limit)
 		return
@@ -91,7 +91,7 @@ func (cfg *apiConfig) handlerGetTransactions(w http.ResponseWriter, r *http.Requ
 
 	transactions, err := cfg.DB.GetTransactions(r.Context(), accountID)
 	if err != nil {
-		respondWithError(w, 400, fmt.Sprintf("Couldn't get transactions: %v", err))
+		respondWithError(w, 400, fmt.Sprintf("couldn't get transactions: %v", err))
 		return
 	}
 
@@ -104,7 +104,7 @@ func (cfg *apiConfig) handlerGetTransactionByID(w http.ResponseWriter, r *http.R
 		ID:        transacID,
 	})
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("Couldn't get transaction: %v", err))
+		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("couldn't get transaction by id: %v", err))
 		return
 	}
 
@@ -117,7 +117,7 @@ func (cfg *apiConfig) handlerGetTransactionsByType(w http.ResponseWriter, r *htt
 		Type:      transacType,
 	})
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("Couldn't get transactions: %v", err))
+		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("couldn't get transactions by type: %v", err))
 		return
 	}
 
@@ -131,7 +131,7 @@ func (cfg *apiConfig) handlerGetTransactionsByAccount(w http.ResponseWriter, r *
 		SortCode:      sortCode,
 	})
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("Couldn't get transactions: %v", err))
+		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("couldn't get transactions by account: %v", err))
 		return
 	}
 
@@ -144,7 +144,7 @@ func (cfg *apiConfig) handlerGetTransactionsWithLimit(w http.ResponseWriter, r *
 		Limit:     limit,
 	})
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("Couldn't get transactions: %v", err))
+		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("couldn't get transactions: %v", err))
 		return
 	}
 
@@ -154,7 +154,7 @@ func (cfg *apiConfig) handlerGetTransactionsWithLimit(w http.ResponseWriter, r *
 func (cfg *apiConfig) getTransactionsByOthersAccount(w http.ResponseWriter, r *http.Request, accountID uuid.UUID, othersAccountIDString string) {
 	othersAccountIDInt, err := strconv.Atoi(othersAccountIDString)
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "Couldn't convert others account id string to int")
+		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("couldn't convert others account id string to int: %v", err))
 	}
 	othersAccountID := int32(othersAccountIDInt)
 	account, err := cfg.DB.GetOthersAccountByID(r.Context(), database.GetOthersAccountByIDParams{
@@ -162,7 +162,7 @@ func (cfg *apiConfig) getTransactionsByOthersAccount(w http.ResponseWriter, r *h
 		ID:        othersAccountID,
 	})
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("Couldn't get others account: %v", err))
+		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("couldn't get others account by id: %v", err))
 		return
 	}
 
@@ -172,7 +172,7 @@ func (cfg *apiConfig) getTransactionsByOthersAccount(w http.ResponseWriter, r *h
 		SortCode:      account.SortCode,
 	})
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("Couldn't get transactions: %v", err))
+		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("couldn't get transactions by others account: %v", err))
 		return
 	}
 

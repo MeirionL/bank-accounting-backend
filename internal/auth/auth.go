@@ -52,7 +52,7 @@ func ValidateUser(r *http.Request, jwtSecret string) (string, error) {
 }
 
 func GetBearerToken(headers http.Header) (string, error) {
-	authHeader := headers.Get("Authorization") // Gets stuff from "Authorization: Bearer <token>"
+	authHeader := headers.Get("Authorization")
 	if authHeader == "" {
 		return "", ErrNoAuthHeaderIncluded
 	}

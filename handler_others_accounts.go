@@ -20,7 +20,7 @@ func (cfg *apiConfig) handlerGetOthersAccounts(w http.ResponseWriter, r *http.Re
 	params := parameters{}
 	err := decoder.Decode(&params)
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, "Couldn't decode parameters")
+		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("couldn't decode parameters: %v", err))
 		return
 	}
 
@@ -37,9 +37,16 @@ func (cfg *apiConfig) handlerGetOthersAccounts(w http.ResponseWriter, r *http.Re
 		return
 	}
 
+	accountIDString := r.URL.Query().Get("id")
+
+	if accountIDString != "" {
+		cfg.handlerGetOthersAccountByID(w, r, accountIDString)
+		return
+	}
+
 	accounts, err := cfg.DB.GetOthersAccounts(r.Context(), accountID)
 	if err != nil {
-		respondWithError(w, 400, fmt.Sprintf("Couldn't get others accounts: %v", err))
+		respondWithError(w, 400, fmt.Sprintf("couldn't get others accounts: %v", err))
 		return
 	}
 
@@ -53,7 +60,7 @@ func (cfg *apiConfig) handlerGetOthersAccountByDetails(w http.ResponseWriter, r 
 		SortCode:      sortCode,
 	})
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "Couldn't get others account")
+		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("couldn't get others account by details: %v", err))
 		return
 	}
 
@@ -63,14 +70,14 @@ func (cfg *apiConfig) handlerGetOthersAccountByDetails(w http.ResponseWriter, r 
 func (cfg *apiConfig) handlerGetOthersAccountByID(w http.ResponseWriter, r *http.Request, accountIDString string) {
 	accountIDInt, err := strconv.Atoi(accountIDString)
 	if err != nil {
-		respondWithError(w, 400, "Couldn't convert account id string to int")
+		respondWithError(w, 400, fmt.Sprintf("couldn't convert account id string to int: %v", err))
 	}
 	accountID := int32(accountIDInt)
 	account, err := cfg.DB.GetOthersAccountByID(r.Context(), database.GetOthersAccountByIDParams{
 		ID: accountID,
 	})
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "Couldn't get others account")
+		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("couldn't get others account by id: %v", err))
 		return
 	}
 
@@ -87,7 +94,7 @@ func (cfg *apiConfig) createOthersAccount(w http.ResponseWriter, r *http.Request
 		AccountID:     accID,
 	})
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "Couldn't create others account")
+		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("couldn't create others account: %v", err))
 		return
 	}
 }
@@ -99,7 +106,7 @@ func (cfg *apiConfig) checkOthersAccountName(w http.ResponseWriter, r *http.Requ
 		SortCode:      sortCode,
 	})
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "Couldn't get others account")
+		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("couldn't get others account by details: %v", err))
 		return
 	}
 
@@ -111,7 +118,7 @@ func (cfg *apiConfig) checkOthersAccountName(w http.ResponseWriter, r *http.Requ
 			AccountID:     account.AccountID,
 		})
 		if err != nil {
-			respondWithError(w, http.StatusInternalServerError, "Failed to update others account name")
+			respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("couldn't update others account name: %v", err))
 			return
 		}
 	}

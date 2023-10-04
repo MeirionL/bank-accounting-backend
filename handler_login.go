@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -23,31 +24,31 @@ func (cfg *apiConfig) handlerUsersLogin(w http.ResponseWriter, r *http.Request) 
 	params := parameters{}
 	err := decoder.Decode(&params)
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, "Couldn't decode parameters")
+		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("couldn't decode parameters: %v", err))
 		return
 	}
 
 	user, err := cfg.DB.GetUserByID(r.Context(), params.ID)
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, "Couldn't get user")
+		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("couldn't get user: %v", err))
 		return
 	}
 
 	err = auth.CheckPasswordHash(params.Password, user.HashedPassword)
 	if err != nil {
-		respondWithError(w, http.StatusUnauthorized, "Invalid password")
+		respondWithError(w, http.StatusUnauthorized, fmt.Sprintf("invalid password: %v", err))
 		return
 	}
 
 	accessToken, err := auth.MakeJWT(user.ID, cfg.jwtSecret, time.Hour)
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, "Couldn't create access JWT")
+		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("couldn't create access JWT: %v", err))
 		return
 	}
 
 	refreshToken, err := auth.MakeJWT(user.ID, cfg.jwtSecret, time.Hour*24*60)
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, "Couldn't create refresh JWT")
+		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("couldn't create refresh JWT: %v", err))
 		return
 	}
 

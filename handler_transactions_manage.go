@@ -27,7 +27,7 @@ func (cfg *apiConfig) handlerCreateTransaction(w http.ResponseWriter, r *http.Re
 
 	userID, ok := r.Context().Value(userIDKey).(int32)
 	if !ok {
-		respondWithError(w, http.StatusInternalServerError, "Couldn't get userID from context")
+		respondWithError(w, http.StatusInternalServerError, "couldn't get userID from context")
 		return
 	}
 
@@ -35,7 +35,7 @@ func (cfg *apiConfig) handlerCreateTransaction(w http.ResponseWriter, r *http.Re
 	params := parameters{}
 	err := decoder.Decode(&params)
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, "Couldn't decode parameters")
+		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("couldn't decode parameters: %v", err))
 		return
 	}
 
@@ -47,12 +47,12 @@ func (cfg *apiConfig) handlerCreateTransaction(w http.ResponseWriter, r *http.Re
 
 	accountUserID, err := cfg.DB.GetUserIDByAccountID(r.Context(), accountID)
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("couldn't get user id: %v", err))
+		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("couldn't get user id by account id: %v", err))
 		return
 	}
 
 	if userID != accountUserID {
-		respondWithError(w, http.StatusForbidden, "action is not authorized for user")
+		respondWithError(w, http.StatusForbidden, fmt.Sprintf("action is not authorized for user: %v", userID))
 		return
 	}
 
@@ -79,7 +79,7 @@ func (cfg *apiConfig) handlerCreateTransaction(w http.ResponseWriter, r *http.Re
 		AccountID:       accountID,
 	})
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("Couldn't create transaction: %v", err))
+		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("couldn't create transaction: %v", err))
 		return
 	}
 
@@ -101,7 +101,7 @@ func (cfg *apiConfig) handlerDeleteTransaction(w http.ResponseWriter, r *http.Re
 
 	userID, ok := r.Context().Value(userIDKey).(int32)
 	if !ok {
-		respondWithError(w, http.StatusInternalServerError, "Couldn't get userID from context")
+		respondWithError(w, http.StatusInternalServerError, "couldn't get userID from context")
 		return
 	}
 
@@ -109,7 +109,7 @@ func (cfg *apiConfig) handlerDeleteTransaction(w http.ResponseWriter, r *http.Re
 	params := parameters{}
 	err := decoder.Decode(&params)
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, "Couldn't decode parameters")
+		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("couldn't decode parameters: %v", err))
 		return
 	}
 
@@ -120,19 +120,19 @@ func (cfg *apiConfig) handlerDeleteTransaction(w http.ResponseWriter, r *http.Re
 
 	accountUserID, err := cfg.DB.GetUserIDByAccountID(r.Context(), accountID)
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("couldn't get user id: %v", err))
+		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("couldn't get user id by account id: %v", err))
 		return
 	}
 
 	if userID != accountUserID {
-		respondWithError(w, http.StatusForbidden, "action is not authorized for user")
+		respondWithError(w, http.StatusForbidden, fmt.Sprintf("action is not authorized for user: %v", userID))
 		return
 	}
 
 	transacIDString := chi.URLParam(r, "transactionID")
 	transacID, err := uuid.Parse(transacIDString)
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("Unable to parse UUID: %v", err))
+		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("unable to parse UUID: %v", err))
 		return
 	}
 
@@ -141,7 +141,7 @@ func (cfg *apiConfig) handlerDeleteTransaction(w http.ResponseWriter, r *http.Re
 		ID:        transacID,
 	})
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("Couldn't delete transaction: %v", err))
+		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("couldn't delete transaction: %v", err))
 		return
 	}
 

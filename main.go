@@ -5,7 +5,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"time"
 
 	"github.com/MeirionL/personal-finance-app/internal/database"
 	"github.com/go-chi/chi/v5"
@@ -16,22 +15,8 @@ import (
 )
 
 type apiConfig struct {
-	DB        *database.Queries // Calling the database package in my directory
+	DB        *database.Queries
 	jwtSecret string
-}
-
-type Logger struct {
-	handler http.Handler
-}
-
-func (l *Logger) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	start := time.Now()
-	l.handler.ServeHTTP(w, r)
-	log.Printf("%s %s %v", r.Method, r.URL.Path, time.Since(start))
-}
-
-func NewLogger(handlerToWrap http.Handler) *Logger {
-	return &Logger{handlerToWrap}
 }
 
 func main() {
@@ -52,14 +37,14 @@ func main() {
 		log.Fatal("DB_URL is not found in the environment")
 	}
 
-	db, err := sql.Open("postgres", dbURL) // Loading in our database.
+	db, err := sql.Open("postgres", dbURL)
 	if err != nil {
 		log.Fatal("Can't connect to database")
 	}
 
-	cfg := apiConfig{ // An API config we can pass to our
-		DB:        database.New(db), // handlers so that they have access to
-		jwtSecret: jwtSecret,        // our database.
+	cfg := apiConfig{
+		DB:        database.New(db),
+		jwtSecret: jwtSecret,
 	}
 
 	router := chi.NewRouter()
@@ -83,8 +68,8 @@ func main() {
 	v1Router.Get("/users/{userID}", cfg.handlerGetUserByID)
 	v1Router.Post("/login", cfg.handlerUsersLogin)
 
+	// Router that implements user authentication
 	authRouter := chi.NewRouter()
-
 	authRouter.Use(cfg.middlewareAuth)
 
 	authRouter.Put("/users", cfg.handlerUsersUpdate)

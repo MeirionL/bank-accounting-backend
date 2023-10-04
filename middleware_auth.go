@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -16,13 +17,13 @@ func (cfg *apiConfig) middlewareAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		userIDString, err := auth.ValidateUser(r, cfg.jwtSecret)
 		if err != nil {
-			respondWithError(w, http.StatusUnauthorized, "Unauthorized user")
+			respondWithError(w, http.StatusUnauthorized, fmt.Sprintf("unauthorized user: %v", err))
 			return
 		}
 
 		userIDInt, err := strconv.Atoi(userIDString)
 		if err != nil {
-			respondWithError(w, http.StatusInternalServerError, "Couldn't convert userID to int")
+			respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("couldn't convert userID to int: %v", err))
 			return
 		}
 		userID := int32(userIDInt)
