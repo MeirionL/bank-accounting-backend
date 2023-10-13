@@ -31,6 +31,12 @@ type OthersAccount struct {
 	AccountID     uuid.UUID
 }
 
+type RevokedToken struct {
+	Token     string
+	RevokedAt time.Time
+	UserID    int32
+}
+
 type Transaction struct {
 	ID              uuid.UUID
 	CreatedAt       time.Time

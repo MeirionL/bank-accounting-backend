@@ -4,11 +4,19 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
+)
+
+type TokenType string
+
+const (
+	TokenTypeAccess  TokenType = "pfa-access"
+	TokenTypeRefresh TokenType = "pfa-refresh"
 )
 
 var ErrNoAuthHeaderIncluded = errors.New("not auth header included in request")
@@ -25,16 +33,59 @@ func CheckPasswordHash(password, hash string) error {
 	return bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 }
 
-func MakeJWT(userID int32, tokenSecret string, expiresIn time.Duration) (string, error) {
+func MakeJWT(userID int32, tokenSecret string, expiresIn time.Duration, tokenType TokenType) (string, error) {
 	signingKey := []byte(tokenSecret)
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{
-		Issuer:    "PFA",
+		Issuer:    string(tokenType),
 		IssuedAt:  jwt.NewNumericDate(time.Now().UTC()),
 		ExpiresAt: jwt.NewNumericDate(time.Now().UTC().Add(expiresIn)),
 		Subject:   fmt.Sprintf("%d", userID),
 	})
 	return token.SignedString(signingKey)
+}
+
+func RefreshToken(tokenString, tokenSecret string) (string, error) { // takes in a refresh token, and if still valid, creates and returns a new access token.
+	claimsStruct := jwt.RegisteredClaims{}
+	token, err := jwt.ParseWithClaims(
+		tokenString,
+		&claimsStruct,
+		func(token *jwt.Token) (interface{}, error) { return []byte(tokenSecret), nil },
+	)
+	if err != nil {
+		return "", err
+	}
+
+	userIDString, err := token.Claims.GetSubject()
+	if err != nil {
+		return "", err
+	}
+
+	issuer, err := token.Claims.GetIssuer()
+	if err != nil {
+		return "", err
+	}
+	if issuer != string(TokenTypeRefresh) {
+		return "", errors.New("invalid issuer")
+	}
+
+	userIDInt, err := strconv.Atoi(userIDString)
+	if err != nil {
+		return "", err
+	}
+	userID := int32(userIDInt)
+
+	newToken, err := MakeJWT(
+		userID,
+		tokenSecret,
+		time.Hour,
+		TokenTypeAccess,
+	)
+	if err != nil {
+		return "", err
+	}
+
+	return newToken, nil
 }
 
 func ValidateUser(r *http.Request, jwtSecret string) (string, error) {
@@ -83,8 +134,8 @@ func ValidateJWT(tokenString, tokenSecret string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if issuer != "PFA" {
-		return "", errors.New("invalid issuer")
+	if issuer != string(TokenTypeAccess) {
+		return "", errors.New("invalid access token, potentially expired")
 	}
 
 	return userIDString, nil

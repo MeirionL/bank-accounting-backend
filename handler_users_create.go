@@ -30,6 +30,20 @@ func (cfg *apiConfig) handlerCreateUser(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
+	duplicateUsers, err := cfg.DB.GetUsersByDetails(r.Context(), database.GetUsersByDetailsParams{
+		Name:           params.Name,
+		HashedPassword: hashedPassword,
+	})
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("couldn't get users by details: %v", err))
+		return
+	}
+
+	if len(duplicateUsers) >= 1 {
+		respondWithError(w, http.StatusBadRequest, "users with entered parameters already exist")
+		return
+	}
+
 	user, err := cfg.DB.CreateUser(r.Context(), database.CreateUserParams{
 		CreatedAt:      time.Now().UTC(),
 		UpdatedAt:      time.Now().UTC(),

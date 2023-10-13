@@ -115,6 +115,9 @@ func (cfg *apiConfig) handlerDeleteAccount(w http.ResponseWriter, r *http.Reques
 	}
 
 	accountIDString := chi.URLParam(r, "accountID")
+	if accountIDString == "" {
+		respondWithError(w, http.StatusBadRequest, "account ID parameter not provided")
+	}
 	accountID, err := uuid.Parse(accountIDString)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("unable to parse UUID: %v", err))

@@ -58,15 +58,13 @@ func main() {
 		MaxAge:           300,
 	}))
 
-	v1Router := chi.NewRouter()
+	router.Get("/healthz", handlerReadiness)
+	router.Get("/err", handlerErr)
 
-	v1Router.Get("/healthz", handlerReadiness)
-	v1Router.Get("/err", handlerErr)
-
-	v1Router.Post("/users", cfg.handlerCreateUser)
-	v1Router.Get("/users", cfg.handlerGetUsers)
-	v1Router.Get("/users/{userID}", cfg.handlerGetUserByID)
-	v1Router.Post("/login", cfg.handlerUsersLogin)
+	router.Post("/users", cfg.handlerCreateUser)
+	router.Get("/users", cfg.handlerGetUsers)
+	router.Get("/users/{userID}", cfg.handlerGetUserByID)
+	router.Post("/login", cfg.handlerUsersLogin)
 
 	// Router that implements user authentication
 	authRouter := chi.NewRouter()
@@ -74,6 +72,10 @@ func main() {
 
 	authRouter.Put("/users", cfg.handlerUsersUpdate)
 	authRouter.Delete("/users", cfg.handlerDeleteUser)
+
+	authRouter.Post("/revoke", cfg.handlerRevoke)
+	authRouter.Get("/revoke", cfg.handlerGetRevokedTokens)
+	authRouter.Post("/refresh", cfg.handlerRefresh)
 
 	authRouter.Post("/accounts", cfg.handlerCreateAccount)
 	authRouter.Get("/accounts", cfg.handlerGetAccounts)
@@ -88,8 +90,7 @@ func main() {
 
 	authRouter.Get("/others", cfg.handlerGetOthersAccounts)
 
-	router.Mount("/v1", v1Router)
-	v1Router.Mount("/auth", authRouter)
+	router.Mount("/auth", authRouter)
 
 	srv := &http.Server{
 		Handler: router,

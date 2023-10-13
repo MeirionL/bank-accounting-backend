@@ -100,6 +100,44 @@ func (q *Queries) GetUsers(ctx context.Context) ([]User, error) {
 	return items, nil
 }
 
+const getUsersByDetails = `-- name: GetUsersByDetails :many
+SELECT id, created_at, updated_at, name, hashed_password FROM users WHERE name = $1 AND hashed_password = $2
+`
+
+type GetUsersByDetailsParams struct {
+	Name           string
+	HashedPassword string
+}
+
+func (q *Queries) GetUsersByDetails(ctx context.Context, arg GetUsersByDetailsParams) ([]User, error) {
+	rows, err := q.db.QueryContext(ctx, getUsersByDetails, arg.Name, arg.HashedPassword)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []User
+	for rows.Next() {
+		var i User
+		if err := rows.Scan(
+			&i.ID,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.Name,
+			&i.HashedPassword,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const updateUser = `-- name: UpdateUser :one
 UPDATE users
 SET  updated_at = $2, name = $3, hashed_password = $4

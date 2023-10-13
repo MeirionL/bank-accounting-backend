@@ -39,6 +39,11 @@ func (cfg *apiConfig) handlerCreateTransaction(w http.ResponseWriter, r *http.Re
 		return
 	}
 
+	if params.TransactionType != "outgoing" && params.TransactionType != "incoming" {
+		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("change transaction type from %v to incoming or outgoing", params.TransactionType))
+		return
+	}
+
 	accountID, err := uuid.Parse(params.AccountID)
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("couldn't parse account id: %v", err))
