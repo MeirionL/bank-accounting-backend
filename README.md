@@ -50,10 +50,10 @@ go build && ./personal-finance-app
 | PUT account | Update account name and/or balance |
 | DELETE account | DELETE account with entered account_ID parameter |
 | GET balances | Show balances of all accounts for user |
-| GET "others account" | Show all accounts that desired user account has transactions with. Can filter to find individual "others accounts" by providing bank details or "other account" ID |
 | POST transaction | Create transaction with time, type, amount, pre and post balance and info about "other account" involved |
 GET transactions | Show all transactions for desired account in order of most recent. Can filter to specific transactions by providing bank details, transaction ID, "others account" ID, transactions type, or a limit of how many you wish to show |
 DELETE transaction | Delete specific transaction from account |
+| GET "others account" | Show all accounts that desired user account has transactions with. Can filter to find individual "others accounts" by providing bank details or "other account" ID |
 
 ### GET healthz
 
@@ -125,16 +125,6 @@ Optionally you can filter the returned accounts by adding these optional paramet
 
     curl -i -H 'Authorization: Bearer <ACCESS_TOKEN>' -X GET "http://localhost:<PORT>/auth/balances"
 
-### GET others account
-
-    curl -i -H 'Accept: application/json' -H 'Content-Type: application/json' -H 'Authorization: Bearer <ACCESS_TOKEN>' -X GET -d '{"account_id":"<ACCOUNT_ID>"}'  "http://localhost:<PORT>/auth/others"
-
-Optionally you can filter the returned transactions by adding these optional parameters on the end of the route:
-
-    ?account_number=12345678&sort_code=12-34-56
-
-    ?id=<OTHERS_ACCOUNT_ID>
-
 ### POST transaction
 
     curl -i -H 'Accept: application/json' -H 'Content-Type: application/json' -H 'Authorization: Bearer <ACCESS_TOKEN>' -X POST -d '{"transaction_time":"YYYY-MM-DDTHH:MM:SSZ","transaction_type":"outgoing","amount":12.30,"pre_balance":45.60,"post_balance":78.90,"new_account":true,"account_name":"Foo","account_number":"12345678","sort_code":"12-34-56","account_id":"<ACCOUNT_ID>"}' "http://"localhost:<PORT>/auth/transactions
@@ -152,7 +142,7 @@ __Time format placeholders breakdown:__
 
 ### GET transactions
 
-    curl -i -H 'Authorization: Bearer <ACCESS_TOKEN>' -X GET "http://localhost:<PORT>/auth/transactions"
+    curl -i -H 'Accept: application/json' -H 'Content-Type: application/json' -H 'Authorization: Bearer <ACCESS_TOKEN>' -X GET -d '{"account_id":"<ACCOUNT_ID>"}' "http://localhost:<PORT>/auth/transactions"
 
 Optionally you can filter the returned transactions by adding these optional parameters on the end of the route:
 
@@ -164,8 +154,18 @@ Optionally you can filter the returned transactions by adding these optional par
 
     ?limit=123
 
-    ?others_account=<OTHER_ACCOUNT_ID>
+    ?others_account_id=<OTHER_ACCOUNT_ID>
 
 ### DELETE transaction
 
-    curl -i -H 'Authorization: Bearer <ACCESS_TOKEN>' -X DELETE "http://localhost:<PORT>/auth/transactions/<TRANSACTION_ID>"
+    curl -i -H 'Accept: application/json' -H 'Content-Type: application/json' -H 'Authorization: Bearer <ACCESS_TOKEN>' -X DELETE -d '{"account_id":"<ACCOUNT_ID>"}' "http://localhost:<PORT>/auth/transactions/<TRANSACTION_ID>"
+
+### GET others account
+
+    curl -i -H 'Accept: application/json' -H 'Content-Type: application/json' -H 'Authorization: Bearer <ACCESS_TOKEN>' -X GET -d '{"account_id":"<ACCOUNT_ID>"}'  "http://localhost:<PORT>/auth/others"
+
+Optionally you can filter the returned transactions by adding these optional parameters on the end of the route:
+
+    ?account_number=12345678&sort_code=12-34-56
+
+    ?id=<OTHERS_ACCOUNT_ID>

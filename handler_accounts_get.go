@@ -19,14 +19,9 @@ func (cfg *apiConfig) handlerGetAccounts(w http.ResponseWriter, r *http.Request)
 	sortCode := r.URL.Query().Get("sort_code")
 
 	if accountNumber != "" && sortCode != "" {
-		print("we got the params")
 		cfg.handlerGetAccountByDetails(w, r, userID, accountNumber, sortCode)
 		return
 	}
-
-	print(accountNumber)
-	print("\n")
-	fmt.Printf("sort code is: %v", sortCode)
 
 	accountIDString := r.URL.Query().Get("id")
 

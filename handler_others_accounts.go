@@ -37,10 +37,10 @@ func (cfg *apiConfig) handlerGetOthersAccounts(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	accountIDString := r.URL.Query().Get("id")
+	IDString := r.URL.Query().Get("id")
 
-	if accountIDString != "" {
-		cfg.handlerGetOthersAccountByID(w, r, accountIDString)
+	if IDString != "" {
+		cfg.handlerGetOthersAccountByID(w, r, accountID, IDString)
 		return
 	}
 
@@ -67,14 +67,16 @@ func (cfg *apiConfig) handlerGetOthersAccountByDetails(w http.ResponseWriter, r 
 	respondWithJSON(w, http.StatusOK, databaseOthersAccountToOthersAccount(account))
 }
 
-func (cfg *apiConfig) handlerGetOthersAccountByID(w http.ResponseWriter, r *http.Request, accountIDString string) {
-	accountIDInt, err := strconv.Atoi(accountIDString)
+func (cfg *apiConfig) handlerGetOthersAccountByID(w http.ResponseWriter, r *http.Request, accountID uuid.UUID, IDString string) {
+	idInt, err := strconv.Atoi(IDString)
 	if err != nil {
-		respondWithError(w, 400, fmt.Sprintf("couldn't convert account id string to int: %v", err))
+		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("couldn't convert id string to int: %v", err))
 	}
-	accountID := int32(accountIDInt)
+	id := int32(idInt)
+
 	account, err := cfg.DB.GetOthersAccountByID(r.Context(), database.GetOthersAccountByIDParams{
-		ID: accountID,
+		AccountID: accountID,
+		ID:        id,
 	})
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("couldn't get others account by id: %v", err))
