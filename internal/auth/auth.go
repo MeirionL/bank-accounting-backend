@@ -134,7 +134,7 @@ func ValidateJWT(tokenString, tokenSecret string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if issuer != string(TokenTypeAccess) {
+	if issuer != string(TokenTypeAccess) && issuer != string(TokenTypeRefresh) {
 		return "", errors.New("invalid access token, potentially expired")
 	}
 

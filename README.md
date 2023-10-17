@@ -57,55 +57,55 @@ DELETE transaction | Delete specific transaction from account |
 
 ### GET healthz
 
-    curl -i -X GET http://localhost:<PORT>/healthz
+    curl -i -X GET "http://localhost:<PORT>/healthz"
 
 ### GET error
 
-    curl -i -X GET http://localhost:<PORT>/err
+    curl -i -X GET "http://localhost:<PORT>/err"
 
 ### POST user
 
-    curl -i -H 'Accept: application/json' -H 'Content-Type: application/json' -X POST -d '{"name":"Foo","password":"Bar"}' http://localhost:<PORT>/users
+    curl -i -H 'Accept: application/json' -H 'Content-Type: application/json' -X POST -d '{"name":"Foo","password":"Bar"}' "http://localhost:<PORT>/users"
 
 ### GET users
 
-    curl -i -X GET http://localhost:<PORT>/users
+    curl -i -X GET "http://localhost:<PORT>/users"
 
 ### GET user by ID
 
-    curl -i -X GET http://localhost:<PORT>/users/<userID>
+    curl -i -X GET "http://localhost:<PORT>/users/<userID>"
 
 ### POST login
 
-    curl -H 'Accept: application/json' -H 'Content-Type: application/json' -X POST -d '{"id": 123,"password":"Foo"}' http://localhost:<PORT>/login
+    curl -H 'Accept: application/json' -H 'Content-Type: application/json' -X POST -d '{"id": 123,"password":"Foo"}' "http://localhost:<PORT>/login"
 
 ### PUT user
 
-    curl -i -H 'Accept: application/json' -H 'Content-Type: application/json' -H 'Authorization: Bearer <ACCESS_TOKEN>' -X PUT -d {"name":"Foo","password":"Bar"}' http://localhost:<PORT>/auth/users
+    curl -i -H 'Accept: application/json' -H 'Content-Type: application/json' -H 'Authorization: Bearer <ACCESS_TOKEN>' -X PUT -d '{"name":"Foo","password":"Bar"}' "http://localhost:<PORT>/auth/users"
 
 ### DELETE user
 
-    curl -i -H 'Authorization: Bearer <ACCESS_TOKEN>' -X DELETE http://localhost:<PORT>/auth/users
+    curl -i -H 'Authorization: Bearer <ACCESS_TOKEN>' -X DELETE "http://localhost:<PORT>/auth/users"
 
 ### Refresh token
 
-    curl -i -H 'Authorization: Bearer <REFRESH_TOKEN>' -X POST http://localhost:<PORT>/auth/refresh
+    curl -i -H 'Authorization: Bearer <REFRESH_TOKEN>' -X POST "http://localhost:<PORT>/auth/refresh"
 
 ### Revoke refresh token
 
-    curl -i -H 'Authorization: Bearer <REFRESH_TOKEN>' -X POST http://localhost:<PORT>/auth/revoke
+    curl -i -H 'Authorization: Bearer <REFRESH_TOKEN>' -X POST "http://localhost:<PORT>/auth/revoke"
 
 ### GET revoked tokens
 
-    curl -i -H 'Authorization: Bearer <ACCESS_TOKEN>' -X GET http://localhost:<PORT>/auth/revoke
+    curl -i -H 'Authorization: Bearer <ACCESS_TOKEN>' -X GET "http://localhost:<PORT>/auth/revoke"
 
 ### POST account
 
-    curl -i -H 'Accept: application/json' -H 'Content-Type: application/json' -H 'Authorization: Bearer <ACCESS_TOKEN>' -X POST -d '{"account_name":"Foo","balance":123.456, "account_number":"12345678", "sort_code":"12-34-56"}' http://localhost:<PORT>/auth/accounts
+    curl -i -H 'Accept: application/json' -H 'Content-Type: application/json' -H 'Authorization: Bearer <ACCESS_TOKEN>' -X POST -d '{"account_name":"Foo","balance":123.456, "account_number":"12345678", "sort_code":"12-34-56"}' "http://localhost:<PORT>/auth/accounts"
 
 ### GET accounts
 
-    curl -i -H 'Authorization: Bearer <ACCESS_TOKEN>' -X GET http://localhost:<PORT>/auth/accounts
+    curl -i -H 'Authorization: Bearer <ACCESS_TOKEN>' -X GET "http://localhost:<PORT>/auth/accounts"
 
 Optionally you can filter the returned accounts by adding these optional parameters on the end of the route:
 
@@ -115,19 +115,19 @@ Optionally you can filter the returned accounts by adding these optional paramet
 
 ### PUT account
 
-    curl -i -H 'Accept: application/json' -H 'Content-Type: application/json' -H 'Authorization: Bearer <ACCESS_TOKEN>' -X PUT -d '{"id":"<ACCOUNT_ID>", "account_name":"new_account_name","balance":123.456}' http://localhost:<PORT>/auth/accounts
+    curl -i -H 'Accept: application/json' -H 'Content-Type: application/json' -H 'Authorization: Bearer <ACCESS_TOKEN>' -X PUT -d '{"id":"<ACCOUNT_ID>", "account_name":"new_account_name","balance":123.456}' "http://localhost:<PORT>/auth/accounts"
 
 ### DELETE account
 
-    curl -i -H 'Authorization: Bearer <ACCESS_TOKEN>' -X DELETE http://localhost:<PORT>/auth/accounts/<ACCOUNT_ID>
+    curl -i -H 'Authorization: Bearer <ACCESS_TOKEN>' -X DELETE "http://localhost:<PORT>/auth/accounts/<ACCOUNT_ID>"
 
 ### GET accounts balances
 
-    curl -i -H 'Authorization: Bearer <ACCESS_TOKEN>' -X GET http://localhost:<PORT>/auth/balances
+    curl -i -H 'Authorization: Bearer <ACCESS_TOKEN>' -X GET "http://localhost:<PORT>/auth/balances"
 
 ### GET others account
 
-    curl -i -H 'Accept: application/json' -H 'Content-Type: application/json' -H 'Authorization: Bearer <ACCESS_TOKEN>' -X GET -d '{"account_id":"<ACCOUNT_ID>"}'  http://localhost:<PORT>/auth/others
+    curl -i -H 'Accept: application/json' -H 'Content-Type: application/json' -H 'Authorization: Bearer <ACCESS_TOKEN>' -X GET -d '{"account_id":"<ACCOUNT_ID>"}'  "http://localhost:<PORT>/auth/others"
 
 Optionally you can filter the returned transactions by adding these optional parameters on the end of the route:
 
@@ -137,7 +137,7 @@ Optionally you can filter the returned transactions by adding these optional par
 
 ### POST transaction
 
-    curl -i -H 'Accept: application/json' -H 'Content-Type: application/json' -H 'Authorization: Bearer <ACCESS_TOKEN>' -X POST -d '{"transaction_time":"YYYY-MM-DDTHH:MM:SSZ","transaction_type":"outgoing","amount":12.30,"pre_balance":45.60,"post_balance":78.90,"new_account":true,"account_name":"Foo","account_number":"12345678","sort_code":"12-34-56","account_id":"<ACCOUNT_ID>"}' http://localhost:<PORT>/auth/transactions
+    curl -i -H 'Accept: application/json' -H 'Content-Type: application/json' -H 'Authorization: Bearer <ACCESS_TOKEN>' -X POST -d '{"transaction_time":"YYYY-MM-DDTHH:MM:SSZ","transaction_type":"outgoing","amount":12.30,"pre_balance":45.60,"post_balance":78.90,"new_account":true,"account_name":"Foo","account_number":"12345678","sort_code":"12-34-56","account_id":"<ACCOUNT_ID>"}' "http://"localhost:<PORT>/auth/transactions
 
 __Time format placeholders breakdown:__
 
@@ -152,7 +152,7 @@ __Time format placeholders breakdown:__
 
 ### GET transactions
 
-    curl -i -H 'Authorization: Bearer <ACCESS_TOKEN>' -X GET http://localhost:<PORT>/auth/transactions
+    curl -i -H 'Authorization: Bearer <ACCESS_TOKEN>' -X GET "http://localhost:<PORT>/auth/transactions"
 
 Optionally you can filter the returned transactions by adding these optional parameters on the end of the route:
 
@@ -168,4 +168,4 @@ Optionally you can filter the returned transactions by adding these optional par
 
 ### DELETE transaction
 
-    curl -i -H 'Authorization: Bearer <ACCESS_TOKEN>' -X DELETE http://localhost:<PORT>/auth/transactions/<TRANSACTION_ID>
+    curl -i -H 'Authorization: Bearer <ACCESS_TOKEN>' -X DELETE "http://localhost:<PORT>/auth/transactions/<TRANSACTION_ID>"
