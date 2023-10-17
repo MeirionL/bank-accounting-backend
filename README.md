@@ -34,6 +34,8 @@ go build && ./personal-finance-app
 
 | Request | Description |
 | --- | --- |
+| GET health | Show status of server |
+| GET error | Show error handler is working |
 | POST user | Create user with name, password and ID |
 | GET users | Show info of all users |
 | GET user by ID | Show specific user based on ID parameter |
@@ -53,6 +55,13 @@ go build && ./personal-finance-app
 GET transactions | Show all transactions for desired account in order of most recent. Can filter to specific transactions by providing bank details, transaction ID, "others account" ID, transactions type, or a limit of how many you wish to show |
 DELETE transaction | Delete specific transaction from account |
 
+### GET healthz
+
+    `curl -i -X GET http://localhost:<PORT>/healthz`
+
+### GET error
+
+    `curl -i -X GET http://localhost:<PORT>/err`
 
 ### POST user
 
