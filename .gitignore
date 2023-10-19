@@ -2,3 +2,4 @@
 .env
 personal-finance-app
 out
+.dockerignore
