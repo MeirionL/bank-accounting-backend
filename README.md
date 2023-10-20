@@ -169,3 +169,7 @@ Optionally you can filter the returned transactions by adding these optional par
     ?account_number=12345678&sort_code=12-34-56
 
     ?id=<OTHERS_ACCOUNT_ID>
+
+## Contriubuting
+
+If you'd like to contribute, please fork the repository and open a pull request to the `main` branch.
