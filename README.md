@@ -170,6 +170,6 @@ Optionally you can filter the returned transactions by adding these optional par
 
     ?id=<OTHERS_ACCOUNT_ID>
 
-## Contriubuting
+## Contributing
 
 If you'd like to contribute, please fork the repository and open a pull request to the `main` branch.
