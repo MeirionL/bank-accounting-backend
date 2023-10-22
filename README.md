@@ -1,10 +1,10 @@
 # boing-block
 
-A REST API that allows users to store safe bank account and transaction information to help view it easily in VSCode, without the ability for anyone to interact with the finances themselves. [Here](https://www.youtube.com/watch?v=1T8ZMjy2xSk) is my video explaining how the project works in under 3 minutes.
+boing-block is a REST API that allows users to store safe bank account and transaction information to help view it easily in VSCode, without the ability for anyone to interact with the finances themselves. [Here](https://www.youtube.com/watch?v=1T8ZMjy2xSk) is my video explaining how the project works in under 3 minutes.
 
 ## Motivation
 
-This started out from an idea to be able to help my family, through eventually designing a way to have quick access to only the information I need to help them manage their finances into a budget.
+This started out from an idea to be able to help my family, through eventually designing a way to have quick access to only the information I need to help them manage their finances into a budget. boing-block allows for the essentials of bank account transfers information with proper authentication, without any other unnecessary add-ons to make it more complex to use. 
 
 ## Installation
 
