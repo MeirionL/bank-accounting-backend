@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/MeirionL/personal-finance-app/internal/auth"
+	"github.com/MeirionL/boing-block/internal/auth"
 )
 
 func (cfg *apiConfig) handlerUsersLogin(w http.ResponseWriter, r *http.Request) {

@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/MeirionL/personal-finance-app/internal/database"
+	"github.com/MeirionL/boing-block/internal/database"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
 	"github.com/joho/godotenv"

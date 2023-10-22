@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/MeirionL/personal-finance-app/internal/auth"
-	"github.com/MeirionL/personal-finance-app/internal/database"
+	"github.com/MeirionL/boing-block/internal/auth"
+	"github.com/MeirionL/boing-block/internal/database"
 )
 
 func (cfg *apiConfig) handlerUsersUpdate(w http.ResponseWriter, r *http.Request) {

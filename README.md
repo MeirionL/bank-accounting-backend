@@ -1,4 +1,4 @@
-# personal-finance-app-API
+# boing-block
 
 A REST API that allows users to store safe bank account and transaction information to help view it easily in VSCode, without the ability for anyone to interact with the finances themselves. [Here](https://www.youtube.com/watch?v=1T8ZMjy2xSk) is my video explaining how the project works in under 3 minutes.
 
@@ -11,7 +11,7 @@ This started out from an idea to be able to help my family, through eventually d
 Inside a Go module:
 
 ```bash
-go get github.com/MeirionL/personal-finance-api
+go get github.com/MeirionL/boing-block
 ```
 
 I would also reccomend downloading a REST API client extension like the [Thunder Client](https://www.thunderclient.com/) for this. The below doccumentation will reference curl commands which you can translate to your client extention
@@ -27,7 +27,7 @@ Inside the project directory create a `.env` file with the following 3 values:
 Start the server:
 
 ```bash
-go build && ./personal-finance-app
+go build && ./boing-block
 ```
 
 ## __Requests__

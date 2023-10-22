@@ -1,4 +1,4 @@
-module github.com/MeirionL/personal-finance-app
+module github.com/MeirionL/boing-block
 
 go 1.21
 

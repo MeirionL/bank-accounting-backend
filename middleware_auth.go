@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/MeirionL/personal-finance-app/internal/auth"
+	"github.com/MeirionL/boing-block/internal/auth"
 )
 
 type contextKey string

@@ -6,7 +6,7 @@ package main
 import (
 	"time"
 
-	"github.com/MeirionL/personal-finance-app/internal/database"
+	"github.com/MeirionL/boing-block/internal/database"
 	"github.com/google/uuid"
 )
 
